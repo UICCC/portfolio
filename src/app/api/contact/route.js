@@ -8,11 +8,21 @@ export async function POST(request) {
       return Response.json({ error: 'Missing fields' }, { status: 400 })
     }
 
+    const { EMAIL_SERVICE, EMAIL_USER, EMAIL_PASSWORD } = process.env
+    if (!EMAIL_SERVICE || !EMAIL_USER || !EMAIL_PASSWORD) {
+      console.error('Missing email env vars:', {
+        EMAIL_SERVICE: Boolean(EMAIL_SERVICE),
+        EMAIL_USER: Boolean(EMAIL_USER),
+        EMAIL_PASSWORD: Boolean(EMAIL_PASSWORD),
+      })
+      return Response.json({ error: 'Email service not configured' }, { status: 500 })
+    }
+
     const transporter = nodemailer.createTransport({
-      service: process.env.EMAIL_SERVICE,
+      service: EMAIL_SERVICE,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
+        user: EMAIL_USER,
+        pass: EMAIL_PASSWORD,
       },
     })
 
